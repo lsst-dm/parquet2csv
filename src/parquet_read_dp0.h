@@ -19,8 +19,9 @@ class ReadParquetBatch{
 
   public:
     ReadParquetBatch(std::string fileName, std::string partConfigFile);
-    arrow::Status ReadNextBatch(int batchNumber);
-    
+//    arrow::Status ReadNextBatch(int batchNumber);
+    arrow::Status ReadNextBatch();
+
   private:
 
     int DumpProcessMemory(std::string idValue="", bool bVerbose=false) const;
@@ -36,5 +37,5 @@ class ReadParquetBatch{
 
     std::unique_ptr<PartitionConfig> m_partitionConfig;
     std::unique_ptr<parquet::arrow::FileReader> m_arrow_reader_gbl;
-  
+    std::unique_ptr<::arrow::RecordBatchReader> m_rb_reader_gbl;
 };

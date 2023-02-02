@@ -107,79 +107,36 @@
     reader_builder.properties(arrow_reader_props);
 
     ARROW_ASSIGN_OR_RAISE(m_arrow_reader_gbl, reader_builder.Build());
-
+    ARROW_RETURN_NOT_OK(m_arrow_reader_gbl->GetRecordBatchReader(&m_rb_reader_gbl)); 
     return arrow::Status::OK();
   }
 
-  // Read next table from RecordBatchReader
-  arrow::Status ReadParquetBatch::ReadNextBatch(int batchNumber_gbl) { 
 
-    // Unfortunatelly there's a bug in the arrow library, keeping a pointer 
-    //   to the RecordBatchReader as class parameter leads to seg fault
-    //   That's why this object is retrieved for each batch
-    std::unique_ptr<::arrow::RecordBatchReader> tmp;
-    ARROW_RETURN_NOT_OK(m_arrow_reader_gbl->GetRecordBatchReader(&tmp)  ); 
-    std::cout<<"--------- LOOP "<<m_batchNumber<<std::endl;
-/*
-std::cout<<"READER SCHEMA"<<std::endl;
-std::shared_ptr<::arrow::Schema>  reader_schema;
-m_arrow_reader_gbl->GetSchema(&reader_schema);
-std::cout<<reader_schema->ToString()<<std::endl;
-std::cout<<"-------------- READER SCHEMA"<<std::endl;
-*/
+  arrow::Status ReadParquetBatch::ReadNextBatch() { 
 
-    // Loop until the correct batchnumber is found 
-    //  (  see the remark at the beginning of the function)
-    int iCmpt=0;
-    for (arrow::Result<std::shared_ptr<arrow::RecordBatch>> maybe_batch : *tmp){
-      // Operate on each batch...
+    arrow::Result<std::shared_ptr<arrow::RecordBatch>> maybe_batch = m_rb_reader_gbl->Next(); 
+    
+    if(maybe_batch!=nullptr)
+    {
+      int vmRSS_batch = DumpProcessMemory("VmRSS", true);
 
-      if(iCmpt==batchNumber_gbl){
+      ARROW_ASSIGN_OR_RAISE(auto batch, maybe_batch);
+      ARROW_ASSIGN_OR_RAISE(auto table,
+                            arrow::Table::FromRecordBatches(batch->schema(), {batch}));
 
-        std::cout << "\nBatch number " << m_batchNumber <<" / "<<batchNumber_gbl<< std::endl;
-
-        int vmRSS_batch = DumpProcessMemory("VmRSS", true);
-
-        ARROW_ASSIGN_OR_RAISE(auto batch, maybe_batch);
-        ARROW_ASSIGN_OR_RAISE(auto table,
-                              arrow::Table::FromRecordBatches(batch->schema(), {batch}));
-
-        std::cout << "Table size : "<<table->num_rows() << " x " << table->num_columns() << std::endl;
-//       std::cout<<table->schema()->metadata()->ToString()<<std::endl;
-/*
-        std::cout<<"-> panda"<<std::endl;
-        std::shared_ptr<const arrow::KeyValueMetadata> table_metadata = table->schema()->metadata();
-       
-        std::vector<std::string> keyList=table_metadata->keys();
-        for (auto i: keyList)
-          std::cout << i << ' ';
-        std::cout<<std::endl;
-        ARROW_ASSIGN_OR_RAISE(auto out,table_metadata->Get("pandas"));
-        std::cout<<out<<std::endl;
-
-        std::cout<<"Fields"<<std::endl;
-        const std::vector<std::shared_ptr<arrow::Field>> fieldList=table->schema()->fields();
-        for (auto i: fieldList){
-          std::cout << i->ToString() << std::endl;
-          if(i->HasMetadata())
-            std::cout << i->metadata()->ToString() << std::endl;
-        }
-  */
+      std::cout << "Table size : "<<table->num_rows() << " x " << table->num_columns() << std::endl;
         
-        int recordSize = GetRecordSize(table->schema());
-        int tableSize_th = (recordSize * table->num_rows()) / (1024.0 * 1024);
-        std::cout << "Theoretical table size : " << tableSize_th << " MB" << std::endl;
-        std::cout << "Memory delta : " << vmRSS_batch - m_vmRSS_init << std::endl;
-      
-        m_batchNumber++;
-        int res = DumpProcessMemory("", true); 
-        return arrow::Status::OK();
-      }
-      iCmpt++;
-    }
-  
-    std::cout << "Last batch reached " << std::endl;
+      int recordSize = GetRecordSize(table->schema());
+      int tableSize_th = (recordSize * table->num_rows()) / (1024.0 * 1024);
+      std::cout << "Theoretical table size : " << tableSize_th << " MB" << std::endl;
+      std::cout << "Memory delta : " << vmRSS_batch - m_vmRSS_init << std::endl;
 
+      int res = DumpProcessMemory("", true); 
+      return arrow::Status::OK();
+    }
+ 
+    std::cout << "Last batch reached " << std::endl;
     return arrow::Status::ExecutionError("End of RecorBatchReader iterator");
   }
 
+ 
