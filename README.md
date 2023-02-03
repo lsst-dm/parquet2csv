@@ -13,23 +13,23 @@ Arrow & parquet libraries installation
 
 git clone https://github.com/apache/arrow.git
 
-define ARROW_HOME as the directory in which arrow is going to be installed
+define ARROW_HOME as the directory in which arrow is going to be installed<br>
 export CMAKE_MODULE_PATH=<blablabla>/arrow/arrow-dir/cpp/cmake_modules
 
-mkdir build
-cd build
-cmake .. -DCMAKE_INSTALL_PREFIX=$ARROW_HOME -DARROW_CSV=ON -DARROW_PARQUET=ON -DARROW_BUILD_EXAMPLES=ON -DPARQUET_BUILD_EXAMPLES=ON -DARROW_WITH_SNAPPY=ON
-make -j8
-make install
+mkdir build<br>
+cd build<br>
+cmake .. -DCMAKE_INSTALL_PREFIX=$ARROW_HOME -DARROW_CSV=ON -DARROW_PARQUET=ON -DARROW_BUILD_EXAMPLES=ON -DPARQUET_BUILD_EXAMPLES=ON -DARROW_WITH_SNAPPY=ON<br>
+make -j8<br>
+make install<br>
 
 
 Arrow/Parquet interface - read a parquet file as blocks of rows 
 
-define ARROW_HOME in order for cmake to find the arrow and parquet libraries 
-mkdir build; cd build;
-cmake ..
-make
-./test -f parquet_data_file_name
+define ARROW_HOME in order for cmake to find the arrow and parquet libraries<br> 
+mkdir build; cd build;<br>
+cmake ..<br>
+make<br>
+./test -f parquet_data_file_name<br>
 
 Data and configurations files related to the dp02 dataset are available here: 
 https://mydrive.lapp.in2p3.fr/s/2qrb4XBGaaqqfsj
