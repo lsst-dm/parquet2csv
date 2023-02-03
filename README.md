@@ -29,7 +29,7 @@ define ARROW_HOME in order for cmake to find the arrow and parquet libraries
 mkdir build; cd build;
 cmake ..
 make
-./test parquet_data_file_name
+./test -f parquet_data_file_name
 
 Data and configurations files related to the dp02 dataset are available here: 
 https://mydrive.lapp.in2p3.fr/s/2qrb4XBGaaqqfsj
