@@ -37,6 +37,7 @@ https://mydrive.lapp.in2p3.fr/s/2qrb4XBGaaqqfsj
 Read parquet file and save it as CSV file :
 ./reader/parquet_reader -in ../data/calibratedSourceTable_visit.parquet -config ../data/PREOPS-863/calSourceTable_visit/configs/schema.abh -format csv -out calibSource
 <br>
+
 Socket :
 launch the listener.py process defined in the listener directory
 ./reader/parquet_reader  -in ../data/calibratedSourceTable_visit.parquet -config ../data/PREOPS-863/calSourceTable_visit/configs/schema.abh -format stream_socket
@@ -45,9 +46,6 @@ launch the listener.py process defined in the listener directory
 Fifo :
 cat</tmp/test_fifo
 ./reader/parquet_reader  -in ../data/calibratedSourceTable_visit.parquet -config ../data/PREOPS-863/calSourceTable_visit/configs/schema.abh -format fifo
-
-
-
 
 
 Arrow example - how to stream a file between 2 processes
