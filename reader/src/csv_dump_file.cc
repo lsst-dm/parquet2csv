@@ -81,6 +81,8 @@ arrow::Status CsvDumpFile::FormatFile_CSV(){
 std::string CsvDumpFile::GetFileName(int batchNumber=-1){
 
 //  return std::string("/tmp/test_fifo");
+  if (m_output_file.find("fifo") != std::string::npos) 
+    return m_output_file;
 
   if(batchNumber<0) return (m_output_file+".csv");
 

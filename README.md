@@ -34,7 +34,21 @@ make<br>
 Data and configurations files related to the dp02 dataset are available here: 
 https://mydrive.lapp.in2p3.fr/s/2qrb4XBGaaqqfsj
 
-On going (Feb 2023) : dev of the process that checks that the values read from the parquet file are well defined ( no null, Nan, inf, true, false, ....)
+Read parquet file and save it as CSV file :
+./reader/parquet_reader -in ../data/calibratedSourceTable_visit.parquet -config ../data/PREOPS-863/calSourceTable_visit/configs/schema.abh -format csv -out calibSource
+<br>
+Socket :
+launch the listener.py process defined in the listener directory
+./reader/parquet_reader  -in ../data/calibratedSourceTable_visit.parquet -config ../data/PREOPS-863/calSourceTable_visit/configs/schema.abh -format stream_socket
+<br>
+
+Fifo :
+cat</tmp/test_fifo
+./reader/parquet_reader  -in ../data/calibratedSourceTable_visit.parquet -config ../data/PREOPS-863/calSourceTable_visit/configs/schema.abh -format fifo
+
+
+
+
 
 Arrow example - how to stream a file between 2 processes
 https://gist.github.com/westonpace/f5657117d7121b84c1356adec350fdb2

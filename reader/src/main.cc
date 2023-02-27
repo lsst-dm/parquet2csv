@@ -83,25 +83,6 @@ class InputParser{
     return arrow::Status::OK();
   }
 
-  arrow::Status RunFifoStreaming(std::string path_to_file, std::string config_file, std::string output_file, bool bConcatenate) {
-  
-  //  int res=mkfifo("/tmp/test_fifo",0666);
-  //  if(res<0)
-  //    std::cout<<"Error while creating FIFO "<<strerror(errno)<<std::endl;
-
-    int fifo=open("/tmp/test_fifo",O_WRONLY);
-    for (int i = 0; i < 5; i++){
-      std::string msg="message "+std::to_string(i);
-      int ret=write(fifo,msg.c_str(), msg.length()); 
-      if (ret < 0)
-        std::cout<<"Error while writing message "<<msg<<" "<<strerror(errno)<<std::endl;
-      sleep(0.1);
-    }
-    close(fifo);
-
-    return arrow::Status::OK();
-  }
-
   arrow::Status RunCsvDumpFile(std::string path_to_file, std::string config_file, std::string output_file, bool bConcatenate) {
   
     //int res=mkfifo("/tmp/test_fifo",0666);
@@ -112,6 +93,19 @@ class InputParser{
     arrow::Status st = csvInterface.FormatFile_CSV();
 
     std::cout<<"EOF csv to text process"<<std::endl;
+    return arrow::Status::OK();
+  }
+
+  arrow::Status RunFifoStreaming(std::string path_to_file, std::string config_file, std::string output_file, bool bConcatenate) {
+  
+  //  int res=mkfifo("/tmp/test_fifo",0666);
+  //  if(res<0)
+  //    std::cout<<"Error while creating FIFO "<<strerror(errno)<<std::endl;
+
+    int fifo=open("/tmp/test_fifo",O_WRONLY);
+    arrow::Status res = RunCsvDumpFile(path_to_file, config_file, "/tmp/test_fifo", false);
+    close(fifo);
+
     return arrow::Status::OK();
   }
 
