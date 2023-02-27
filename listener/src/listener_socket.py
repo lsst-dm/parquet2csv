@@ -16,5 +16,6 @@ with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as sock:
         conn_file = conn.makefile(mode="b")
         reader = pyarrow.ipc.RecordBatchStreamReader(conn_file)
         table = reader.read_all()
+        #table = reader.read_next_batch()
         print(table)
         print(table.to_pandas())

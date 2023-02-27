@@ -23,6 +23,7 @@
   #include "partition_config.h"
   #include <fstream>
   #include <sstream>
+
   #include <nlohmann/json.hpp>
   using json = nlohmann::json;
 
@@ -34,6 +35,33 @@
 
       DecodePartitionConfig_text();   
   }
+
+  std::string PartitionConfig::ToString(){
+
+    std::stringstream buffer;
+    for(const auto& elem : m_paramConfig)
+       buffer << elem.ToString() << " // ";
+    return buffer.str();
+  }  
+
+  std::vector<std::string> PartitionConfig::GetConfigParamNames(){
+
+    std::vector<std::string> nameList;
+    for(auto const& elem: m_paramConfig)
+      nameList.push_back(elem.name);
+
+    return nameList;
+  }
+  
+  struct ParamType PartitionConfig::GetConfigParamType(std::string name){
+
+    for(const auto& elem : m_paramConfig){
+        if(elem.name==name) return elem;
+    }
+
+    return ParamType();
+  }
+
 
   bool PartitionConfig::endsWith(std::string_view str, std::string_view suffix)
   {
@@ -64,19 +92,20 @@
     while ( paramFile.good() ){
         getline(paramFile, line);
 
+        if(!line.empty()){
+
         bool bNotNull=false;
         if(endsWith(line,notNull)) {
             bNotNull=true;
             line=line.substr(0,line.size()-notNull.size());
         }
 
-        ParamType p;
+        std::string pType;
         std::istringstream ss(line);
-        ss >> key >> p.pType; // set the variables  
-        p.bNotNull=bNotNull;
-        m_paramConfig[key] = p; // input them into the map 
+        ss >> key >> pType; // set the variables  
+        m_paramConfig.push_back(ParamType(key,pType,bNotNull)); // input them into the map 
+        }
     }
 
-    for(const auto& elem : m_paramConfig)
-       std::cout << elem.first << " " << elem.second.ToString() << std::endl;
   }
+

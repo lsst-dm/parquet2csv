@@ -15,8 +15,18 @@
   // specific language governing permissions and limitations
   // under the License.
 
-#include "parquet_read_dp0.h"
-#include "streaming_socket.h"
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <vector>
+#include <fcntl.h>
+#include <iostream>
+
+#include "arrow/io/stdio.h"
+#include <arrow/api.h>
+#include <arrow/io/api.h>
+#include "arrow/ipc/reader.h"
+#include "arrow/ipc/writer.h"
+#include "arrow/record_batch.h"
 
 class InputParser{
     public:
@@ -43,69 +53,41 @@ class InputParser{
         std::vector <std::string> tokens;
 };
 
-  arrow::Status RunScreenDisplay(std::string path_to_file, std::string config_file) {
-  
-    std::unique_ptr<ReadParquetBatch> batchReader(new ReadParquetBatch(path_to_file, config_file));
+arrow::Status ReadArrowTableFromFifo(std::string fifo_name) {
 
-    int batchNumber=0;
-    arrow::Status batchStatus;
-    do
-    {
-      std::cout<<"\nRead next batch "<< batchNumber<<std::endl; 
-      batchStatus = batchReader->ReadNextBatch();
-      batchNumber++;
+    arrow::io::StdinStream input;
+    arrow::io::StdoutStream sink;
+
+    ARROW_ASSIGN_OR_RAISE(auto reader, arrow::ipc::RecordBatchStreamReader::Open(&input));
+
+    std::shared_ptr<arrow::RecordBatch> batch;
+    while (true) {
+     ARROW_ASSIGN_OR_RAISE(batch, reader->Next());
     }
-    while(batchStatus.ok());
 
     std::cout<<"EOF reading process"<<std::endl;
     return arrow::Status::OK();
-  }
+}
 
-  arrow::Status RunSocketStreaming(std::string path_to_file, std::string config_file) {
-  
-    StreamFileToSocket streamer(path_to_file, config_file);
-    arrow::Status st = streamer.StreamFile();
+ 
 
-    std::cout<<"EOF streaming process"<<std::endl;
-    return arrow::Status::OK();
-  }
-
-
-  int main(int argc, char** argv) {
+int main(int argc, char** argv) {
 
     InputParser input(argc, argv);
 
     if( input.cmdOptionExists("-help")){
-        std::cout<<"test -f pq_file -c config_file -o (screen/stream_socket)"<<std::endl;
+        std::cout<<"arrow_listener -in fifo"<<std::endl;
         return EXIT_SUCCESS;
     }
 
-    const std::string &path_to_file = input.getCmdOption("-f");
-    const std::string &config_file = input.getCmdOption("-c");
-    const std::string &display_data = input.getCmdOption("-o");
+    const std::string &fifo_path = input.getCmdOption("-in");
 
-    std::cout<<path_to_file<<std::endl;
-    std::cout<<config_file<<std::endl;
-
-    if(display_data=="screen"||display_data==""){
-      arrow::Status status = RunScreenDisplay(path_to_file,config_file);
-
-      if (!status.ok()) {
-        std::cerr << "Error occurred: " << status.message() << std::endl;
-        return EXIT_FAILURE;
-      }
-    }
-
-    if(display_data=="stream_socket"){
-      arrow::Status status = RunSocketStreaming(path_to_file,config_file);
-
-      if (!status.ok()) {
-        std::cerr << "Error occurred: " << status.message() << std::endl;
-        return EXIT_FAILURE;
-      }
+    if(input.cmdOptionExists("-in")){
+        ReadArrowTableFromFifo(fifo_path);
     }
 
     return EXIT_SUCCESS;
-  }
+}
+
 
 

@@ -39,20 +39,23 @@ private:
   uint64_t position_;
 };
 
+class ReadParquetBatch;
 
 class StreamFileToSocket{
 
  public:
     StreamFileToSocket(std::string fileName, std::string partConfigFile);
     arrow::Status StreamFile(); 
-    
-  private:
+    arrow::Status StreamFileExample();
 
+  private:
 
     bool CheckErr(int err, std::string activity);
     bool CheckErr(arrow::Status status, std::string activity);
     std::shared_ptr<arrow::Table> MakeTable();
     void  SendTable(int socket_fd);
+
+    std::unique_ptr<ReadParquetBatch> m_batchReader;
 
     std::string m_path_to_file;
     std::string m_part_config_file;

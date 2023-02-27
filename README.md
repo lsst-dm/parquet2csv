@@ -14,7 +14,7 @@ Arrow & parquet libraries installation
 git clone https://github.com/apache/arrow.git
 
 define ARROW_HOME as the directory in which arrow is going to be installed<br>
-export CMAKE_MODULE_PATH=<blablabla>/arrow/arrow-dir/cpp/cmake_modules
+export CMAKE_MODULE_PATH=arrow_source_code_directory/arrow/arrow-dir/cpp/cmake_modules
 
 mkdir build<br>
 cd build<br>
