@@ -36,8 +36,9 @@ make install
 # define ARROW_HOME in order for cmake to find the arrow and parquet libraries<br>
 mkdir build
 cd build
-cmake ..
+cmake .. -DCMAKE_INSTALL_PREFIX:PATH=${PWD}/../install
 make
+make install
 ```
 
 ## Download data and configurations files related to the dp02 dataset
@@ -53,7 +54,7 @@ unzip data-2023.03.03.zip
 ## Read parquet file and save it as CSV file
 
 ```shell
-./reader/parquet_reader -in ../data/calibratedSourceTable_visit.parquet -config ../data/PREOPS-863/calSourceTable_visit/configs/schema.abh -format csv -out calibSource
+../install/bin/parquet_reader -in ../data/calibratedSourceTable_visit.parquet -config ../data/PREOPS-863/calSourceTable_visit/configs/schema.abh -format csv -out calibSource
 ```
 
 ## Socket
@@ -61,8 +62,8 @@ unzip data-2023.03.03.zip
 Launch the socket listener python script before reading the parquet file :
 
 ```shell
-python3 ../listener/src/listener_socket.py
-./reader/parquet_reader  -in ../data/calibratedSourceTable_visit.parquet -config ../data/PREOPS-863/calSourceTable_visit/configs/schema.abh -format stream_socket
+python3 ../install/bin/listener_socket.py
+../install/bin/parquet_reader  -in ../data/calibratedSourceTable_visit.parquet -config ../data/PREOPS-863/calSourceTable_visit/configs/schema.abh -format stream_socket
 ```
 
 # Fifo
@@ -70,7 +71,7 @@ python3 ../listener/src/listener_socket.py
 ```shell
 mkfifo /tmp/test_fifo
 cat < /tmp/test_fifo
-./reader/parquet_reader  -in ../data/calibratedSourceTable_visit.parquet -config ../data/PREOPS-863/calSourceTable_visit/configs/schema.abh -format fifo
+../install/bin/parquet_reader  -in ../data/calibratedSourceTable_visit.parquet -config ../data/PREOPS-863/calSourceTable_visit/configs/schema.abh -format fifo
 ```
 
 # Arrow example - how to stream a file between 2 processes

@@ -122,7 +122,7 @@
     // Compute the nimber of lines read by each batch in function of the maximum memory
     //     allocated to the process
     std::shared_ptr<::arrow::Schema> schema;
-    m_arrow_reader_gbl->GetSchema(&schema);
+    arrow::Status status = m_arrow_reader_gbl->GetSchema(&schema);
    // std::cout<<schema->ToString()<<std::endl;
     m_recordSize = GetRecordSize(schema);
     m_batchSize = int((m_maxMemory*1024*1024*0.85)/m_recordSize);   // .85 is a "a la louche" factor

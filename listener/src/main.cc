@@ -83,7 +83,7 @@ int main(int argc, char** argv) {
     const std::string &fifo_path = input.getCmdOption("-in");
 
     if(input.cmdOptionExists("-in")){
-        ReadArrowTableFromFifo(fifo_path);
+      arrow::Status status = ReadArrowTableFromFifo(fifo_path);
     }
 
     return EXIT_SUCCESS;
