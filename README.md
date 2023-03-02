@@ -66,7 +66,8 @@ Launch the listener.py process defined in the listener directory
 # Fifo
 
 ```shell
-cat</tmp/test_fifo
+mkfifo /tmp/test_fifo
+cat < /tmp/test_fifo
 ./reader/parquet_reader  -in ../data/calibratedSourceTable_visit.parquet -config ../data/PREOPS-863/calSourceTable_visit/configs/schema.abh -format fifo
 ```
 
