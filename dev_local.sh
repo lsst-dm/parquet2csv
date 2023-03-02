@@ -54,7 +54,6 @@ then
   fi
   NAMESPACE=$(kubectl get sa -o=jsonpath='{.items[0]..metadata.namespace}')
 fi
-$DIR/build.sh
 
 echo "Running in development mode"
 MOUNTS="-v $DIR:/opt/parquet2csv"
@@ -69,4 +68,4 @@ echo "export FINK_DATA_SIM=$HOME/datasim/"
 echo "fink_simulator -c $HOME/manifests/base/configmap/fink_alert_simulator.conf"
 # docker run --net=host --name "$CONTAINER" --dns-search $NAMESPACE -it $MOUNTS --rm -w "$HOME" "$DEV_IMAGE" bash
 
-docker run --net=host --name "$CONTAINER" -it $MOUNTS --rm -w "$HOME" "$IMAGE" bash
+docker run --net=host --name "$CONTAINER" -it $MOUNTS --rm -w "$HOME" "$ARROW_IMAGE" bash
