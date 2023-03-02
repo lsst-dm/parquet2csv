@@ -30,13 +30,14 @@ make install
 
 # Arrow/Parquet interface - read a parquet file as blocks of rows
 
+## Build
+
 ```shell
 # define ARROW_HOME in order for cmake to find the arrow and parquet libraries<br>
 mkdir build
 cd build
 cmake ..
 make
-./test -f parquet_data_file_name
 ```
 
 ## Download data and configurations files related to the dp02 dataset
