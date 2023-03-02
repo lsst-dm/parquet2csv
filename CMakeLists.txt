@@ -6,4 +6,3 @@ project(globalProject)
 
 add_subdirectory(reader)
 add_subdirectory(listener)
-#add_subdirectory(qserv)

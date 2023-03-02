@@ -28,10 +28,10 @@ make -j8
 make install
 ```
 
-# Arrow/Parquet interface - read a parquet file as blocks of rows 
+# Arrow/Parquet interface - read a parquet file as blocks of rows
 
 ```shell
-# define ARROW_HOME in order for cmake to find the arrow and parquet libraries<br> 
+# define ARROW_HOME in order for cmake to find the arrow and parquet libraries<br>
 mkdir build
 cd build
 cmake ..
@@ -39,8 +39,15 @@ make
 ./test -f parquet_data_file_name
 ```
 
-Data and configurations files related to the dp02 dataset are available here: 
-https://mydrive.lapp.in2p3.fr/s/2qrb4XBGaaqqfsj
+## Download data and configurations files related to the dp02 dataset
+
+This files are available here:
+https://github.com/lsst-dm/parquet2csv/releases/download/2022.03.03/data-2023.03.03.zip
+
+```shell
+wget https://github.com/lsst-dm/parquet2csv/releases/download/2022.03.03/data-2023.03.03.zip
+unzip data-2023.03.03.zip
+```
 
 ## Read parquet file and save it as CSV file
 
