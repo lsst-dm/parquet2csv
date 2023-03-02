@@ -58,9 +58,10 @@ unzip data-2023.03.03.zip
 
 ## Socket
 
-Launch the listener.py process defined in the listener directory
+Launch the socket listener python script before reading the parquet file :
 
 ```shell
+python3 ../listener/src/listener_socket.py
 ./reader/parquet_reader  -in ../data/calibratedSourceTable_visit.parquet -config ../data/PREOPS-863/calSourceTable_visit/configs/schema.abh -format stream_socket
 ```
 
