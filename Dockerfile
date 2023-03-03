@@ -7,7 +7,7 @@ ENV PARQUET2CSV_BUILD_DIR=/opt/parquet2csv/build
 ADD . /opt/parquet2csv
 
 
-RUN mkdir $PARQUET2CSV_BUILD_DIR
+RUN mkdir -p $PARQUET2CSV_BUILD_DIR
 WORKDIR $PARQUET2CSV_BUILD_DIR
 
 RUN cmake .. && \
