@@ -11,4 +11,5 @@ RUN mkdir -p $PARQUET2CSV_BUILD_DIR
 WORKDIR $PARQUET2CSV_BUILD_DIR
 
 RUN cmake .. && \
-    make -j8
+    make -j8 && \
+    make install

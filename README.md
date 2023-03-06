@@ -47,7 +47,7 @@ This files are available here:
 https://github.com/lsst-dm/parquet2csv/releases/download/2022.03.03/data-2023.03.03.zip
 
 ```shell
-wget https://github.com/lsst-dm/parquet2csv/releases/download/2022.03.03/data-2023.03.03.zip
+curl -LO https://github.com/lsst-dm/parquet2csv/releases/download/2022.03.03/data-2023.03.03.zip
 unzip data-2023.03.03.zip
 ```
 
