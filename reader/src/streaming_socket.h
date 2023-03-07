@@ -1,7 +1,8 @@
 
 
 
-class SocketOutputStream : public arrow::io::OutputStream {
+class SocketOutputStream : public arrow::io::OutputStream
+{
 
 public:
     SocketOutputStream(std::shared_ptr<arrow::io::FileOutputStream> target)
@@ -9,38 +10,47 @@ public:
 
     virtual ~SocketOutputStream() {}
 
-    arrow::Status Close() override {
+    arrow::Status Close() override
+    {
         return target_->Close();
     }
-    arrow::Status Abort() override {
+    arrow::Status Abort() override
+    {
         return target_->Abort();
     }
-    bool closed() const override {
+    bool closed() const override
+    {
         return target_->closed();
     }
-    arrow::Status Flush() override {
+    arrow::Status Flush() override
+    {
         return target_->Flush();
     }
 
-    static arrow::Result<std::shared_ptr<SocketOutputStream>> Open(int sock) {
+    static arrow::Result<std::shared_ptr<SocketOutputStream>> Open(int sock)
+    {
         auto target_res = arrow::io::FileOutputStream::Open(sock);
-        if (!target_res.ok()) {
+        if (!target_res.ok())
+        {
             return target_res.status();
         }
         return std::make_shared<SocketOutputStream>(*target_res);
     }
 
-    arrow::Status Write(const void *data, int64_t nbytes) override {
+    arrow::Status Write(const void *data, int64_t nbytes) override
+    {
         position_ += nbytes;
         return target_->Write(data, nbytes);
     }
 
-    arrow::Status Write(const std::shared_ptr<arrow::Buffer> &data) override {
+    arrow::Status Write(const std::shared_ptr<arrow::Buffer> &data) override
+    {
         position_ += data->size();
         return target_->Write(data);
     }
 
-    arrow::Result<int64_t> Tell() const override {
+    arrow::Result<int64_t> Tell() const override
+    {
         return position_;
     }
 
@@ -51,7 +61,8 @@ private:
 
 class ReadParquetBatch;
 
-class StreamFileToSocket {
+class StreamFileToSocket
+{
 
 public:
     StreamFileToSocket(std::string fileName, std::string partConfigFile);

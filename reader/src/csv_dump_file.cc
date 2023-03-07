@@ -30,12 +30,14 @@ CsvDumpFile::CsvDumpFile(std::string fileName, std::string partConfigFile, std::
     // Test if parquet and partition config files exist
     bool bInputError=false;
     fs::path f1{m_path_to_file};
-    if (!fs::exists(f1)) {
+    if (!fs::exists(f1))
+    {
         bInputError=true;
         std::cout << "Data file does not exist "<<m_path_to_file<<std::endl;
     }
     fs::path f2{m_part_config_file};
-    if (!fs::exists(f2)) {
+    if (!fs::exists(f2))
+    {
         bInputError=true;
         std::cout << "Partition config file does not exist "<<m_part_config_file<<std::endl;
     }
@@ -48,23 +50,27 @@ CsvDumpFile::CsvDumpFile(std::string fileName, std::string partConfigFile, std::
 }
 
 // Read an arrow batch, format the table acording to the config file and save it in csv format
-arrow::Status CsvDumpFile::FormatFile_CSV() {
+arrow::Status CsvDumpFile::FormatFile_CSV()
+{
 
     std::unique_ptr<ReadParquetBatch> batchReader(new ReadParquetBatch(m_path_to_file, m_part_config_file));
 
     int batchNumber=0;
     arrow::Status batchStatus;
-    do {
+    do
+    {
         std::cout<<"\nRead next batch "<< batchNumber<<std::endl;
 
         std::shared_ptr<arrow::Table> table_loc;
         batchStatus = batchReader->ReadNextBatchTable_Formatted(table_loc);
 
-        if(batchStatus.ok()) {
+        if(batchStatus.ok())
+        {
             arrow::Status st=WriteFile(batchNumber,table_loc);
             if(m_bConcatenate) arrow::Status st=ConcatenateFiles(batchNumber);
         }
-        else {
+        else
+        {
             std::cout<<"Error while reading and formating batch"<<std::endl;
         }
         batchNumber++;
@@ -78,7 +84,8 @@ arrow::Status CsvDumpFile::FormatFile_CSV() {
 }
 
 // Create the csv file name ( general name and name for each batch)
-std::string CsvDumpFile::GetFileName(int batchNumber=-1) {
+std::string CsvDumpFile::GetFileName(int batchNumber=-1)
+{
 
 //  return std::string("/tmp/test_fifo");
     if (m_output_file.find("fifo") != std::string::npos)
@@ -91,7 +98,8 @@ std::string CsvDumpFile::GetFileName(int batchNumber=-1) {
 }
 
 // Write table in csv format
-arrow::Status CsvDumpFile::WriteFile(int batchNumber, std::shared_ptr<arrow::Table>& table) {
+arrow::Status CsvDumpFile::WriteFile(int batchNumber, std::shared_ptr<arrow::Table>& table)
+{
 
     // Csv file name
     auto csv_filename = GetFileName(batchNumber);
@@ -124,7 +132,8 @@ arrow::Status CsvDumpFile::WriteFile(int batchNumber, std::shared_ptr<arrow::Tab
 }
 
 // Concatenate the batch csv files to one big file
-arrow::Status CsvDumpFile::ConcatenateFiles(int batchNumber) {
+arrow::Status CsvDumpFile::ConcatenateFiles(int batchNumber)
+{
 
     std::string gbl_filename=GetFileName();
     std::string current_filename=GetFileName(batchNumber);

@@ -3,7 +3,8 @@
 
 class ReadParquetBatch;
 
-class CsvDumpFile {
+class CsvDumpFile
+{
 
 public:
     CsvDumpFile(std::string fileName, std::string partConfigFile, std::string outputFile, bool bConcatenate=false);

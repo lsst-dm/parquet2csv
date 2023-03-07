@@ -20,13 +20,15 @@ StreamFileToSocket::StreamFileToSocket(std::string fileName, std::string partCon
     m_path_to_file(fileName), m_part_config_file(partConfigFile)
 {
     m_batchReader = nullptr;
-    if(m_path_to_file!="") {
+    if(m_path_to_file!="")
+    {
         std::cout<<"SETUP ReadParquetBatch"<<std::endl;
         m_batchReader=std::make_unique<ReadParquetBatch>(ReadParquetBatch(m_path_to_file, m_part_config_file));
     }
 }
 
-arrow::Status StreamFileToSocket::StreamFile() {
+arrow::Status StreamFileToSocket::StreamFile()
+{
 
     if(m_path_to_file=="") return StreamFileExample();
 
@@ -35,7 +37,8 @@ arrow::Status StreamFileToSocket::StreamFile() {
     char buffer[1024] = {0};
     int sock = socket(AF_INET, SOCK_STREAM, 0);
 
-    if (!CheckErr(sock, "socket")) {
+    if (!CheckErr(sock, "socket"))
+    {
         return arrow::Status::ExecutionError("Socket initialization failed");
     }
 
@@ -43,17 +46,20 @@ arrow::Status StreamFileToSocket::StreamFile() {
     addr.sin_port = htons(port);
 
     // Convert IPv4 and IPv6 addresses from text to binary form
-    if (!CheckErr(inet_pton(AF_INET, host, &addr.sin_addr), "inet_pton")) {
+    if (!CheckErr(inet_pton(AF_INET, host, &addr.sin_addr), "inet_pton"))
+    {
         return arrow::Status::ExecutionError("IP connection error");;
     }
 
     if (!CheckErr(connect(sock, (struct sockaddr *)&addr, sizeof(addr)),
-                  "connect")) {
+                  "connect"))
+    {
         return arrow::Status::ExecutionError("Socket connection error");
     }
 
     auto output_res = SocketOutputStream::Open(sock);
-    if (!CheckErr(output_res.status(), "arrow::io::FileOutputStream")) {
+    if (!CheckErr(output_res.status(), "arrow::io::FileOutputStream"))
+    {
         return arrow::Status::ExecutionError("arrow::io::FileOutputStream");
     }
     auto output = *output_res;
@@ -69,13 +75,16 @@ arrow::Status StreamFileToSocket::StreamFile() {
         std::cout<<"\nRead next batch "<< batchNumber<<std::endl;
         std::shared_ptr<arrow::Table> table_loc;
         batchStatus = m_batchReader->ReadNextBatchTable(table_loc);
-        if(batchStatus.ok()) {
+        if(batchStatus.ok())
+        {
             std::cout << "Streamed table size : "<<table_loc->num_rows() << " x " << table_loc->num_columns() << std::endl;
 
             // Send table schema
-            if(batchNumber==0) {
+            if(batchNumber==0)
+            {
                 writer_res = arrow::ipc::MakeStreamWriter(output, table_loc->schema());
-                if (!CheckErr(writer_res.status(), "arrow::ipc::MakeStreamWriter")) {
+                if (!CheckErr(writer_res.status(), "arrow::ipc::MakeStreamWriter"))
+                {
                     return arrow::Status::ExecutionError("ERROR : arrow::ipc::MakeStreamWriter");
                 }
             }
@@ -83,14 +92,16 @@ arrow::Status StreamFileToSocket::StreamFile() {
             // Send table
             auto writer = *writer_res;
 
-            if (!CheckErr(writer->WriteTable(*table_loc), "RecordBatchWriter::WriteTable")) {
+            if (!CheckErr(writer->WriteTable(*table_loc), "RecordBatchWriter::WriteTable"))
+            {
                 return arrow::Status::ExecutionError("ERROR : RecordBatchWriter::WriteTable");
             }
 
             //  std::cout<<table_loc->ToString()<<std::endl;
             batchNumber++;
 
-            if(batchNumber==1) {
+            if(batchNumber==1)
+            {
                 auto writer = *writer_res;
                 CheckErr(writer->Close(), "RecordBatchWriter::Close");
                 std::cout<<"EOF reading process"<<std::endl;
@@ -110,14 +121,16 @@ arrow::Status StreamFileToSocket::StreamFile() {
 
 
 
-arrow::Status StreamFileToSocket::StreamFileExample() {
+arrow::Status StreamFileToSocket::StreamFileExample()
+{
 
     struct sockaddr_in addr;
     char hello[] = "Hello from client";
     char buffer[1024] = {0};
     int sock = socket(AF_INET, SOCK_STREAM, 0);
 
-    if (!CheckErr(sock, "socket")) {
+    if (!CheckErr(sock, "socket"))
+    {
         return arrow::Status::ExecutionError("Socket initialization failed");
     }
 
@@ -125,12 +138,14 @@ arrow::Status StreamFileToSocket::StreamFileExample() {
     addr.sin_port = htons(port);
 
     // Convert IPv4 and IPv6 addresses from text to binary form
-    if (!CheckErr(inet_pton(AF_INET, host, &addr.sin_addr), "inet_pton")) {
+    if (!CheckErr(inet_pton(AF_INET, host, &addr.sin_addr), "inet_pton"))
+    {
         return arrow::Status::ExecutionError("IP connection error");;
     }
 
     if (!CheckErr(connect(sock, (struct sockaddr *)&addr, sizeof(addr)),
-                  "connect")) {
+                  "connect"))
+    {
         return arrow::Status::ExecutionError("Socket connection error");
     }
 
@@ -141,8 +156,10 @@ arrow::Status StreamFileToSocket::StreamFileExample() {
 }
 
 
-bool StreamFileToSocket::CheckErr(int err, std::string activity) {
-    if (err < 0) {
+bool StreamFileToSocket::CheckErr(int err, std::string activity)
+{
+    if (err < 0)
+    {
         std::cerr << "Received error code " << err << " while calling " << activity
                   << std::endl;
         return false;
@@ -150,8 +167,10 @@ bool StreamFileToSocket::CheckErr(int err, std::string activity) {
     return true;
 }
 
-bool  StreamFileToSocket::CheckErr(arrow::Status status, std::string activity) {
-    if (!status.ok()) {
+bool  StreamFileToSocket::CheckErr(arrow::Status status, std::string activity)
+{
+    if (!status.ok())
+    {
         std::cerr << "Recevied err status " << status << " while calling "
                   << activity << std::endl;
         return false;
@@ -159,18 +178,21 @@ bool  StreamFileToSocket::CheckErr(arrow::Status status, std::string activity) {
     return true;
 }
 
-std::shared_ptr<arrow::Table> StreamFileToSocket::MakeTable() {
+std::shared_ptr<arrow::Table> StreamFileToSocket::MakeTable()
+{
     arrow::MemoryPool *pool = arrow::default_memory_pool();
     arrow::Int64Builder values_builder(pool);
     arrow::Status st1 = values_builder.Append(1);
     arrow::Status st2 = values_builder.Append(2);
     arrow::Status st3 = values_builder.Append(3);
     std::shared_ptr<arrow::Int64Array> arr;
-    if (!CheckErr(values_builder.Finish(&arr), "values_builder::Finish")) {
+    if (!CheckErr(values_builder.Finish(&arr), "values_builder::Finish"))
+    {
         return nullptr;
     }
 
-    std::vector<std::shared_ptr<arrow::Field>> fields = {
+    std::vector<std::shared_ptr<arrow::Field>> fields =
+    {
         arrow::field("values", arrow::int64())
     };
     auto schema = std::make_shared<arrow::Schema>(fields);
@@ -178,9 +200,11 @@ std::shared_ptr<arrow::Table> StreamFileToSocket::MakeTable() {
 }
 
 
-void  StreamFileToSocket::SendTable(int socket_fd) {
+void  StreamFileToSocket::SendTable(int socket_fd)
+{
     auto output_res = SocketOutputStream::Open(socket_fd);
-    if (!CheckErr(output_res.status(), "arrow::io::FileOutputStream")) {
+    if (!CheckErr(output_res.status(), "arrow::io::FileOutputStream"))
+    {
         return;
     }
     auto output = *output_res;
@@ -188,16 +212,19 @@ void  StreamFileToSocket::SendTable(int socket_fd) {
     arrow::MemoryPool *pool = arrow::default_memory_pool();
 
     auto table = MakeTable();
-    if (table == nullptr) {
+    if (table == nullptr)
+    {
         return;
     }
 
     auto writer_res = arrow::ipc::MakeStreamWriter(output, table->schema());
-    if (!CheckErr(writer_res.status(), "arrow::ipc::MakeStreamWriter")) {
+    if (!CheckErr(writer_res.status(), "arrow::ipc::MakeStreamWriter"))
+    {
         return;
     }
     auto writer = *writer_res;
-    if (!CheckErr(writer->WriteTable(*table), "RecordBatchWriter::WriteTable")) {
+    if (!CheckErr(writer->WriteTable(*table), "RecordBatchWriter::WriteTable"))
+    {
         return;
     }
     CheckErr(writer->Close(), "RecordBatchWriter::Close");

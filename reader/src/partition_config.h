@@ -16,13 +16,15 @@ struct ParamType
 
     ParamType() : name("None"), pType("None"), bNotNull(false) {};
     ParamType(std::string n, std::string t, bool bNull=false) : name(n), pType(t), bNotNull(bNull) {};
-    std::string ToString() const {
+    std::string ToString() const
+    {
         return (name+" "+pType+" "+(bNotNull? "true" : "false"));
     }
 };
 
 
-class PartitionConfig {
+class PartitionConfig
+{
 
 public:
     PartitionConfig() {};

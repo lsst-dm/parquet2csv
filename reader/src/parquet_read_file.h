@@ -15,7 +15,8 @@
 
 class PartitionConfig;
 
-class ReadParquetBatch {
+class ReadParquetBatch
+{
 
 public:
     ReadParquetBatch(std::string fileName, std::string partConfigFile, int maxMemAllocated = 2000);

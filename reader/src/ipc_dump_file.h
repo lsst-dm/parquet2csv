@@ -3,7 +3,8 @@
 
 class ReadParquetBatch;
 
-class IPCDumpFile {
+class IPCDumpFile
+{
 
 public:
     IPCDumpFile(std::string fileName, std::string partConfigFile, std::string outputFile);

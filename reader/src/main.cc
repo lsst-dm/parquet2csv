@@ -26,24 +26,29 @@
 #include "csv_dump_file.h"
 #include "ipc_dump_file.h"
 
-class InputParser {
+class InputParser
+{
 public:
-    InputParser (int &argc, char **argv) {
+    InputParser (int &argc, char **argv)
+    {
         for (int i=1; i < argc; ++i)
             this->tokens.push_back(std::string(argv[i]));
     }
     /// @author iain
-    const std::string& getCmdOption(const std::string &option) const {
+    const std::string& getCmdOption(const std::string &option) const
+    {
         std::vector<std::string>::const_iterator itr;
         itr =  std::find(this->tokens.begin(), this->tokens.end(), option);
-        if (itr != this->tokens.end() && ++itr != this->tokens.end()) {
+        if (itr != this->tokens.end() && ++itr != this->tokens.end())
+        {
             return *itr;
         }
         static const std::string empty_string("");
         return empty_string;
     }
     /// @author iain
-    bool cmdOptionExists(const std::string &option) const {
+    bool cmdOptionExists(const std::string &option) const
+    {
         return std::find(this->tokens.begin(), this->tokens.end(), option)
                != this->tokens.end();
     }
@@ -51,7 +56,8 @@ private:
     std::vector <std::string> tokens;
 };
 
-arrow::Status RunScreenDisplay(std::string path_to_file, std::string config_file) {
+arrow::Status RunScreenDisplay(std::string path_to_file, std::string config_file)
+{
 
     std::unique_ptr<ReadParquetBatch> batchReader(new ReadParquetBatch(path_to_file, config_file));
 
@@ -74,7 +80,8 @@ arrow::Status RunScreenDisplay(std::string path_to_file, std::string config_file
     return arrow::Status::OK();
 }
 
-arrow::Status RunSocketStreaming(std::string path_to_file, std::string config_file) {
+arrow::Status RunSocketStreaming(std::string path_to_file, std::string config_file)
+{
 
     StreamFileToSocket streamer(path_to_file, config_file);
     arrow::Status st = streamer.StreamFile();
@@ -83,7 +90,8 @@ arrow::Status RunSocketStreaming(std::string path_to_file, std::string config_fi
     return arrow::Status::OK();
 }
 
-arrow::Status RunCsvDumpFile(std::string path_to_file, std::string config_file, std::string output_file, bool bConcatenate) {
+arrow::Status RunCsvDumpFile(std::string path_to_file, std::string config_file, std::string output_file, bool bConcatenate)
+{
 
     //int res=mkfifo("/tmp/test_fifo",0666);
     //if(res<0)
@@ -96,7 +104,8 @@ arrow::Status RunCsvDumpFile(std::string path_to_file, std::string config_file, 
     return arrow::Status::OK();
 }
 
-arrow::Status RunFifoStreaming(std::string path_to_file, std::string config_file, std::string output_file, bool bConcatenate) {
+arrow::Status RunFifoStreaming(std::string path_to_file, std::string config_file, std::string output_file, bool bConcatenate)
+{
 
     //  int res=mkfifo("/tmp/test_fifo",0666);
     //  if(res<0)
@@ -109,7 +118,8 @@ arrow::Status RunFifoStreaming(std::string path_to_file, std::string config_file
     return arrow::Status::OK();
 }
 
-arrow::Status RunIpcDumpFile(std::string path_to_file, std::string config_file, std::string output_file) {
+arrow::Status RunIpcDumpFile(std::string path_to_file, std::string config_file, std::string output_file)
+{
 
     IPCDumpFile IPCInterface(path_to_file, config_file, output_file);
     arrow::Status st = IPCInterface.FormatFile_IPC();
@@ -118,11 +128,13 @@ arrow::Status RunIpcDumpFile(std::string path_to_file, std::string config_file, 
     return arrow::Status::OK();
 }
 
-int main(int argc, char** argv) {
+int main(int argc, char** argv)
+{
 
     InputParser input(argc, argv);
 
-    if( input.cmdOptionExists("-help")) {
+    if( input.cmdOptionExists("-help"))
+    {
         std::cout<<"test -in pq_file -config config_file -format (screen/stream_socket/csv/ipc/fifo) -out ouput_name -concat"<<std::endl;
         return EXIT_SUCCESS;
     }
@@ -136,30 +148,36 @@ int main(int argc, char** argv) {
     std::cout<<path_to_file<<std::endl;
     std::cout<<config_file<<std::endl;
 
-    if(display_data=="screen"||display_data=="") {
+    if(display_data=="screen"||display_data=="")
+    {
         arrow::Status status = RunScreenDisplay(path_to_file,config_file);
 
-        if (!status.ok()) {
+        if (!status.ok())
+        {
             std::cerr << "Error occurred: " << status.message() << std::endl;
             return EXIT_FAILURE;
         }
         return EXIT_SUCCESS;
     }
 
-    if(display_data=="stream_socket") {
+    if(display_data=="stream_socket")
+    {
         arrow::Status status = RunSocketStreaming(path_to_file,config_file);
 
-        if (!status.ok()) {
+        if (!status.ok())
+        {
             std::cerr << "Error occurred: " << status.message() << std::endl;
             return EXIT_FAILURE;
         }
         return EXIT_SUCCESS;
     }
 
-    if(display_data=="fifo") {
+    if(display_data=="fifo")
+    {
         arrow::Status status = RunFifoStreaming(path_to_file,config_file,output_file,bConcatenate);
 
-        if (!status.ok()) {
+        if (!status.ok())
+        {
             std::cerr << "Error occurred: " << status.message() << std::endl;
             return EXIT_FAILURE;
         }
@@ -167,20 +185,24 @@ int main(int argc, char** argv) {
     }
 
 
-    if(display_data=="csv") {
+    if(display_data=="csv")
+    {
         arrow::Status status = RunCsvDumpFile(path_to_file,config_file,output_file,bConcatenate);
 
-        if (!status.ok()) {
+        if (!status.ok())
+        {
             std::cerr << "Error occurred: " << status.message() << std::endl;
             return EXIT_FAILURE;
         }
         return EXIT_SUCCESS;
     }
 
-    if(display_data=="ipc") {
+    if(display_data=="ipc")
+    {
         arrow::Status status = RunIpcDumpFile(path_to_file,config_file,output_file);
 
-        if (!status.ok()) {
+        if (!status.ok())
+        {
             std::cerr << "Error occurred: " << status.message() << std::endl;
             return EXIT_FAILURE;
         }

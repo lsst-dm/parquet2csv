@@ -36,7 +36,8 @@ PartitionConfig::PartitionConfig(std::string partConfigFile) :
     DecodePartitionConfig_text();
 }
 
-std::string PartitionConfig::ToString() {
+std::string PartitionConfig::ToString()
+{
 
     std::stringstream buffer;
     for(const auto& elem : m_paramConfig)
@@ -44,7 +45,8 @@ std::string PartitionConfig::ToString() {
     return buffer.str();
 }
 
-std::vector<std::string> PartitionConfig::GetConfigParamNames() {
+std::vector<std::string> PartitionConfig::GetConfigParamNames()
+{
 
     std::vector<std::string> nameList;
     for(auto const& elem: m_paramConfig)
@@ -53,9 +55,11 @@ std::vector<std::string> PartitionConfig::GetConfigParamNames() {
     return nameList;
 }
 
-struct ParamType PartitionConfig::GetConfigParamType(std::string name) {
+struct ParamType PartitionConfig::GetConfigParamType(std::string name)
+{
 
-    for(const auto& elem : m_paramConfig) {
+    for(const auto& elem : m_paramConfig)
+    {
         if(elem.name==name) return elem;
     }
 
@@ -89,13 +93,16 @@ void PartitionConfig::DecodePartitionConfig_text()
     std::string key;
 
     std::string notNull("NOT NULL");
-    while ( paramFile.good() ) {
+    while ( paramFile.good() )
+    {
         getline(paramFile, line);
 
-        if(!line.empty()) {
+        if(!line.empty())
+        {
 
             bool bNotNull=false;
-            if(endsWith(line,notNull)) {
+            if(endsWith(line,notNull))
+            {
                 bNotNull=true;
                 line=line.substr(0,line.size()-notNull.size());
             }
