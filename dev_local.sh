@@ -57,7 +57,6 @@ fi
 
 echo "Running in development mode"
 MOUNTS="-v $DIR:/opt/parquet2csv"
-MOUNTS="$MOUNTS --volume $DIR:$HOME"
 MOUNTS="$MOUNTS --volume /etc/group:/etc/group:ro -v /etc/passwd:/etc/passwd:ro"
 
 CONTAINER="parquet2csv"

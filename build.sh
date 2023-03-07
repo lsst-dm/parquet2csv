@@ -16,7 +16,7 @@
 # limitations under the License.
 #
 
-# Create docker image containing fink-broker for k8s
+# Build source code
 
 # @author  Fabrice Jammes
 
