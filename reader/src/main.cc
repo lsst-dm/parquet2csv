@@ -140,7 +140,7 @@ int main(int argc, char** argv)
         return EXIT_SUCCESS;
     }
 
-    const std::string &path_to_file = input.getCmdOption("-in");
+    const std::string &path_to_file = input.getCmdOption("-infile");
     const std::string &config_file = input.getCmdOption("-config");
     const std::string &display_data = input.getCmdOption("-output");
     const std::string &output_file = input.getCmdOption("-outfile");

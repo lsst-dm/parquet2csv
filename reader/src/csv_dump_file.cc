@@ -115,7 +115,7 @@ arrow::Status CsvDumpFile::WriteFile(int batchNumber, std::shared_ptr<arrow::Tab
     writeOpt.include_header=false;
     writeOpt.quoting_style=arrow::csv::QuotingStyle::None;
 
-    std::cout << "Writing CSV file" << csv_filename<<std::endl;
+    std::cout << "Writing CSV file: " << csv_filename<<std::endl;
     ARROW_RETURN_NOT_OK(arrow::csv::WriteCSV(*table, writeOpt, outstream.get()));
 
     /*
