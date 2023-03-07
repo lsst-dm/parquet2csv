@@ -15,18 +15,18 @@
 
 class PartitionConfig;
 
-class ReadParquetBatch{
+class ReadParquetBatch {
 
-  public:
+public:
     ReadParquetBatch(std::string fileName, std::string partConfigFile, int maxMemAllocated = 2000);
 //    arrow::Status ReadNextBatch(int batchNumber);
     arrow::Status ReadNextBatch();
     //std::shared_ptr<arrow::Table> ReadNextBatchTable();
-    arrow::Status ReadNextBatchTable(std::shared_ptr<arrow::Table>& table); 
+    arrow::Status ReadNextBatchTable(std::shared_ptr<arrow::Table>& table);
     arrow::Status ReadNextBatchTable_Formatted(std::shared_ptr<arrow::Table>& table);
     bool FormattedConfigFile();
 
-  private:
+private:
 
     int DumpProcessMemory(std::string idValue="", bool bVerbose=false) const;
     int GetRecordSize(std::shared_ptr<arrow::Schema> schema, int defaultSize = 32) const;

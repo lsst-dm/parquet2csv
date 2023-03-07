@@ -3,13 +3,13 @@
 
 class ReadParquetBatch;
 
-class CsvDumpFile{
+class CsvDumpFile {
 
- public:
+public:
     CsvDumpFile(std::string fileName, std::string partConfigFile, std::string outputFile, bool bConcatenate=false);
-    arrow::Status FormatFile_CSV(); 
+    arrow::Status FormatFile_CSV();
 
-  private:
+private:
 
     arrow::Status WriteFile(int batchNumber, std::shared_ptr<arrow::Table>& outputTable);
     arrow::Status ConcatenateFiles(int batchNumber);

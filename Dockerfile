@@ -10,6 +10,6 @@ ADD . /opt/parquet2csv
 RUN mkdir -p $PARQUET2CSV_BUILD_DIR
 WORKDIR $PARQUET2CSV_BUILD_DIR
 
-RUN cmake .. && \
+RUN cmake -DCMAKE_INSTALL_PREFIX:PATH=/usr/local .. && \
     make -j8 && \
     make install

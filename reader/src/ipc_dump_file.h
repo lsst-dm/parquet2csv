@@ -3,13 +3,13 @@
 
 class ReadParquetBatch;
 
-class IPCDumpFile{
+class IPCDumpFile {
 
- public:
+public:
     IPCDumpFile(std::string fileName, std::string partConfigFile, std::string outputFile);
-    arrow::Status FormatFile_IPC(); 
+    arrow::Status FormatFile_IPC();
 
-  private:
+private:
 
     arrow::Status WriteFile(int batchNumber, std::shared_ptr<arrow::Table>& outputTable);
     std::string GetFileName(int batchNumber);

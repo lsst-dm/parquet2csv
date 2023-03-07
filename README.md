@@ -63,7 +63,9 @@ Launch the socket listener python script before reading the parquet file :
 
 ```shell
 python3 ../install/bin/listener_socket.py
-../install/bin/parquet_reader  -in ../data/calibratedSourceTable_visit.parquet -config ../data/PREOPS-863/calSourceTable_visit/configs/schema.abh -format stream_socket
+../install/bin/parquet_reader  -in ../data/calibratedSourceTable_visit.parquet \
+  -config ../data/PREOPS-863/calSourceTable_visit/configs/schema.abh \
+  -format stream_socket
 ```
 
 # Fifo
@@ -71,7 +73,9 @@ python3 ../install/bin/listener_socket.py
 ```shell
 mkfifo /tmp/test_fifo
 cat < /tmp/test_fifo
-../install/bin/parquet_reader  -in ../data/calibratedSourceTable_visit.parquet -config ../data/PREOPS-863/calSourceTable_visit/configs/schema.abh -format fifo
+../install/bin/parquet_reader  -in ../data/calibratedSourceTable_visit.parquet \
+  -config ../data/PREOPS-863/calSourceTable_visit/configs/schema.abh \
+  -format fifo
 ```
 
 # Arrow example - how to stream a file between 2 processes
