@@ -58,6 +58,7 @@ fi
 echo "Running in development mode"
 MOUNTS="-v $DIR:/opt/parquet2csv"
 MOUNTS="$MOUNTS --volume $DIR:$HOME"
+MOUNTS="$MOUNTS --volume /etc/group:/etc/group:ro -v /etc/passwd:/etc/passwd:ro"
 
 CONTAINER="parquet2csv"
 echo "oOoOoOoOoOoOoOoOoOoOoOoOoOoOoOoOoOoOoOoOoOoOoOoOoOoO"
@@ -68,4 +69,6 @@ echo "export FINK_DATA_SIM=$HOME/datasim/"
 echo "fink_simulator -c $HOME/manifests/base/configmap/fink_alert_simulator.conf"
 # docker run --net=host --name "$CONTAINER" --dns-search $NAMESPACE -it $MOUNTS --rm -w "$HOME" "$DEV_IMAGE" bash
 
-docker run --net=host --name "$CONTAINER" -it $MOUNTS --rm -w "$HOME" "$ARROW_IMAGE" bash
+docker run --net=host --name "$CONTAINER" \
+  --user=$(id -u):$(id -g $USER) \
+  -it $MOUNTS --rm -w "$HOME" "$ARROW_IMAGE" bash

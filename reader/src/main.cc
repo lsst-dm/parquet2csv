@@ -19,6 +19,7 @@
 #include <sys/stat.h>
 #include <fcntl.h>
 #include <iostream>
+#include <unistd.h>
 
 #include "partition_config.h"
 #include "parquet_read_file.h"

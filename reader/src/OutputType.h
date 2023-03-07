@@ -1,17 +1,4 @@
-
-#include "arrow/api.h"
-#include "arrow/io/api.h"
-#include "arrow/result.h"
-#include "arrow/type.h"
-#include "arrow/chunked_array.h"
-#include "arrow/util/type_fwd.h"
-#include "parquet/arrow/reader.h"
-#include "parquet/arrow/writer.h"
-
-#include <unistd.h>
-#include <iostream>
-#include <fstream>
-#include <map>
+#include <string>
 
 class OutputType
 {
