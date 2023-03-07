@@ -24,7 +24,7 @@ set -euxo pipefail
 
 DIR=$(cd "$(dirname "$0")"; pwd -P)
 
-mkdir -p $DIR/build
-cd $DIR/build
-cmake ..
-make -j $(nproc)
+. $DIR/conf.sh
+
+# Build ingest image
+DOCKER_BUILDKIT=0 docker image build --tag "$IMAGE" "$DIR"

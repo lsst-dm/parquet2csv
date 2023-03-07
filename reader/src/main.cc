@@ -25,6 +25,7 @@
 #include "streaming_socket.h"
 #include "csv_dump_file.h"
 #include "ipc_dump_file.h"
+#include "OutputType.h"
 
 class InputParser
 {
@@ -141,75 +142,41 @@ int main(int argc, char** argv)
 
     const std::string &path_to_file = input.getCmdOption("-in");
     const std::string &config_file = input.getCmdOption("-config");
-    const std::string &display_data = input.getCmdOption("-format");
-    const std::string &output_file = input.getCmdOption("-out");
+    const std::string &display_data = input.getCmdOption("-output");
+    const std::string &output_file = input.getCmdOption("-outfile");
     bool bConcatenate=input.cmdOptionExists("-concat");
 
     std::cout<<path_to_file<<std::endl;
     std::cout<<config_file<<std::endl;
 
-    if(display_data=="screen"||display_data=="")
-    {
-        arrow::Status status = RunScreenDisplay(path_to_file,config_file);
-
-        if (!status.ok())
-        {
-            std::cerr << "Error occurred: " << status.message() << std::endl;
-            return EXIT_FAILURE;
-        }
-        return EXIT_SUCCESS;
+    // TODO add switch case
+    arrow::Status status;
+    switch(OutputType::match(display_data)) {
+    case OutputType::STDOUT:
+        status = RunScreenDisplay(path_to_file,config_file);
+        break;
+    case OutputType::SOCKET:
+        status = RunSocketStreaming(path_to_file,config_file);
+        break;
+    case OutputType::FIFO:
+        status = RunFifoStreaming(path_to_file,config_file,output_file,bConcatenate);
+        break;
+    case OutputType::CSV:
+        status = RunCsvDumpFile(path_to_file,config_file,output_file,bConcatenate);
+        break;
+    case OutputType::IPC:
+        status = RunIpcDumpFile(path_to_file,config_file,output_file);
+        break;
+    default:
+        std::cerr << "Unrecognized -output option argument: " << display_data << std::endl;
+        return EXIT_FAILURE;
     }
 
-    if(display_data=="stream_socket")
+    if (!status.ok())
     {
-        arrow::Status status = RunSocketStreaming(path_to_file,config_file);
-
-        if (!status.ok())
-        {
-            std::cerr << "Error occurred: " << status.message() << std::endl;
-            return EXIT_FAILURE;
-        }
-        return EXIT_SUCCESS;
+        std::cerr << "Error occurred: " << status.message() << std::endl;
+        return EXIT_FAILURE;
     }
-
-    if(display_data=="fifo")
-    {
-        arrow::Status status = RunFifoStreaming(path_to_file,config_file,output_file,bConcatenate);
-
-        if (!status.ok())
-        {
-            std::cerr << "Error occurred: " << status.message() << std::endl;
-            return EXIT_FAILURE;
-        }
-        return EXIT_SUCCESS;
-    }
-
-
-    if(display_data=="csv")
-    {
-        arrow::Status status = RunCsvDumpFile(path_to_file,config_file,output_file,bConcatenate);
-
-        if (!status.ok())
-        {
-            std::cerr << "Error occurred: " << status.message() << std::endl;
-            return EXIT_FAILURE;
-        }
-        return EXIT_SUCCESS;
-    }
-
-    if(display_data=="ipc")
-    {
-        arrow::Status status = RunIpcDumpFile(path_to_file,config_file,output_file);
-
-        if (!status.ok())
-        {
-            std::cerr << "Error occurred: " << status.message() << std::endl;
-            return EXIT_FAILURE;
-        }
-        return EXIT_SUCCESS;
-    }
-
-
     return EXIT_SUCCESS;
 }
 
